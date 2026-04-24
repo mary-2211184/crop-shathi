@@ -21,36 +21,30 @@ export default function UploadPage() {
 
     const recognition = new SpeechRecognition();
 
-    // 🔥 Bangla support
+    // Bangla support
     recognition.lang = "bn-BD";
-
-    recognition.continuous = false;
-    recognition.interimResults = false;
 
     recognition.onresult = (event: any) => {
       const spokenText = event.results[0][0].transcript;
-
-      console.log("Voice:", spokenText);
-
-      setText(spokenText.trim()); // clear text
+      setText(spokenText.trim());
     };
 
-    recognition.onerror = (event: any) => {
-      console.error("Voice error:", event.error);
-      alert("Voice recognition failed");
+    recognition.onerror = () => {
+      alert("Voice recognition error");
     };
 
     recognition.start();
   };
 
-  // 📸 DETECT BUTTON
-  const handleNext = () => {
+  // 🔥 DETECT BUTTON FUNCTION (IMPORTANT)
+  const handleDetect = () => {
     if (!text && !image) {
-      alert("Please speak, type, or upload image");
+      alert("Please type, speak, or upload an image");
       return;
     }
 
-    localStorage.setItem("imageUploaded", "true");
+    // 🔥 SAVE USER INPUT FOR DETECT PAGE
+    localStorage.setItem("userInput", text);
 
     router.push("/detect");
   };
@@ -75,7 +69,7 @@ export default function UploadPage() {
           onChange={(e) => setText(e.target.value)}
         />
 
-        {/* FILE UPLOAD */}
+        {/* IMAGE UPLOAD */}
         <input
           type="file"
           onChange={(e) => setImage(e.target.files?.[0] || null)}
@@ -85,13 +79,15 @@ export default function UploadPage() {
         {/* BUTTONS */}
         <div className="flex justify-center gap-3">
 
+          {/* DETECT BUTTON */}
           <button
-            onClick={handleNext}
+            onClick={handleDetect}
             className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
           >
             Detect →
           </button>
 
+          {/* VOICE BUTTON */}
           <button
             onClick={handleVoice}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
